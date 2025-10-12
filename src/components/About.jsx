@@ -1,9 +1,10 @@
 import React from "react";
-import { Tilt } from 'react-tilt';
-
+import { Tilt} from "react-tilt";
 import { motion } from "framer-motion";
-import { styles} from "../styles";
+
+import { styles } from "../styles";
 import { services } from "../constants";
+import { SectionWrapper } from "../hoc";
 import { fadeIn, textVariant } from "../utils/motion";
 
 const ServiceCard = ({ index, title, icon }) => (
@@ -34,7 +35,6 @@ const ServiceCard = ({ index, title, icon }) => (
   </Tilt>
 );
 
-
 const About = () => {
   return (
     <>
@@ -42,22 +42,25 @@ const About = () => {
         <p className={styles.sectionSubText}>Introduction</p>
         <h2 className={styles.sectionHeadText}>Overview.</h2>
       </motion.div>
+
       <motion.p
         variants={fadeIn("", "", 0.1, 1)}
-        className="mt-4 text-secondary text-[17px] max-w-3xl leading-[30px]"
+        className='mt-4 text-secondary text-[17px] max-w-3xl leading-[30px]'
       >
-        I build responsive, user-friendly websites that looks great on any device. I also provide remote IT support services  to ensure  your systems are running smoothly.
-        From troubleshooting and maintenance to hardware setup and optimization, I offer dependable
-        technical assisstance that keeps everything operating at its best.
+        I build responsive, user-friendly websites that looks great on any
+        device. I also provide remote IT support services  to ensure  your
+        systems are running smoothly. From troubleshooting and maintenance
+        to hardware setup and optimization, I offer dependable technical
+        assisstance that keeps everything operating at its best.
       </motion.p>
 
-      <div>
+      <div className='mt-20 flex flex-wrap gap-10'>
         {services.map((service, index) => (
-          <service-card key={service.title} index={index} {...service} />
+          <ServiceCard key={service.title} index={index} {...service} />
         ))}
       </div>
     </>
-  )
-}
+  );
+};
 
-export default About;
+export default About
