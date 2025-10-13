@@ -3,9 +3,10 @@ import { Canvas } from "@react-three/fiber";
 import { OrbitControls, Preload, useGLTF } from "@react-three/drei";
 
 import CanvasLoader from "../Loader";
+import { useInView } from 'react-intersection-observer';
 
 const Computers = ({ isMobile }) => {
-  const computer = useGLTF("public/desktop_pc/scene.gltf");
+  const computer = useGLTF("/desktop_pc/scene.gltf");
 
   useEffect(() => {
     if (!computer.scene) return;
@@ -69,8 +70,8 @@ const ComputersCanvas = () => {
       shadows
       dpr={[1, 1.5]}
       camera={{ position: [20, 3, 5], fov: 25 }}
-      gl={{ preserveDrawingBuffer: true, antialias: true }}
-      style={{ width: "100vw", height: "100vh" }}
+      gl={{ preserveDrawingBuffer: false, antialias: false, powerPreference: 'low-power' }}
+      style={{ width: "100vw", height: "100vh", overflow: "hidden", touchAction: "none" }}
     >
       <Suspense fallback={<CanvasLoader />}>
         <OrbitControls
