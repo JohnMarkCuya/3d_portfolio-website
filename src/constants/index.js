@@ -19,9 +19,7 @@ import {
   starbucks,
   tesla,
   shopify,
-  carrent,
-  jobit,
-  tripguide,
+  portfolio,
   threejs,
 } from "../assets";
 
@@ -118,23 +116,19 @@ const projects = [
   {
     name: "3D Portfolio",
     description:
-      "Web-based platform that allows users to search, book, and manage car rentals from various providers, providing a convenient and efficient solution for transportation needs.",
+      "A 3D portfolio website to showcase my skills and projects as a web developer. Developed using React, Three.js, and Framer Motion.",
     tags: [
       {
-        name: "react",
+        name: "r3f",
         color: "blue-text-gradient",
       },
       {
-        name: "mongodb",
+        name: "framer-motion",
         color: "green-text-gradient",
       },
-      {
-        name: "tailwind",
-        color: "pink-text-gradient",
-      },
     ],
-    image: carrent,
-    source_code_link: "https://github.com/",
+    image: portfolio,
+    source_code_link: "https://github.com/JohnMarkCuya/3d_portfolio-website",
   },
 ];
 
