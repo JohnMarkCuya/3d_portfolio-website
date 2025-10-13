@@ -65,7 +65,7 @@ const ComputersCanvas = () => {
   }, []);
 
   return (
-    /* <Canvas
+    <Canvas
       frameloop='demand'
       shadows
       dpr={[1, 1.5]}
@@ -83,16 +83,7 @@ const ComputersCanvas = () => {
       </Suspense>
 
       <Preload all />
-    </Canvas> */
-
-    <Canvas dpr={[1, 1.5]}>
-  <ambientLight />
-  <mesh>
-    <boxGeometry />
-    <meshStandardMaterial color="hotpink" />
-  </mesh>
-</Canvas>
-
+    </Canvas>
   );
 };
 
