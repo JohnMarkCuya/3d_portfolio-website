@@ -19,7 +19,7 @@ const Computers = ({ isMobile }) => {
   }, [computer]);
 
   return (
-    <>
+    <mesh>
       <hemisphereLight intensity={0.50} groundColor='black' />
       <spotLight
         position={[-20, 50, 10]}
@@ -36,7 +36,9 @@ const Computers = ({ isMobile }) => {
         position={isMobile ? [0, -2.9, -2] : [0, -3.25, -1.5]}
         rotation={[-0.01, -0.2, -0.05]}
       />
-    </>
+      <boxGeometry />
+      <meshStandardMaterial color="hotpink" />
+    </mesh>
   );
 };
 
