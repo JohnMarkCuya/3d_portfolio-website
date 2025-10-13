@@ -36,8 +36,6 @@ const Computers = ({ isMobile }) => {
         position={isMobile ? [0, -2.9, -2] : [0, -3.25, -1.5]}
         rotation={[-0.01, -0.2, -0.05]}
       />
-      <boxGeometry />
-      <meshStandardMaterial color="hotpink" />
     </mesh>
   );
 };
@@ -67,12 +65,12 @@ const ComputersCanvas = () => {
   }, []);
 
   return (
-    <Canvas
+    /* <Canvas
       frameloop='demand'
       shadows
       dpr={[1, 1.5]}
       camera={{ position: [20, 3, 5], fov: 25 }}
-      gl={{ preserveDrawingBuffer: false, antialias: false, powerPreference: 'low-power' }}
+      gl={{ preserveDrawingBuffer: true, antialias: false, powerPreference: 'low-power' }}
       style={{ width: "100vw", height: "100vh", overflow: "hidden", touchAction: "none" }}
     >
       <Suspense fallback={<CanvasLoader />}>
@@ -85,7 +83,16 @@ const ComputersCanvas = () => {
       </Suspense>
 
       <Preload all />
-    </Canvas>
+    </Canvas> */
+
+    <Canvas dpr={[1, 1.5]}>
+  <ambientLight />
+  <mesh>
+    <boxGeometry />
+    <meshStandardMaterial color="hotpink" />
+  </mesh>
+</Canvas>
+
   );
 };
 
