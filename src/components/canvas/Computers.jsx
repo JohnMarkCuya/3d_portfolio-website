@@ -59,7 +59,7 @@ useEffect(() => {
         position={[-20, 50, 10]}
         angle={0.12}
         penumbra={1}
-        intensity={isMobile ? 2.5 : 9000}
+        intensity={9000}
         castShadow
         shadow-mapSize={1024}
       />
