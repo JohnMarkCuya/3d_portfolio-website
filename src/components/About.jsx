@@ -47,8 +47,7 @@ const About = () => {
         variants={fadeIn("", "", 0.1, 1)}
         className='mt-4 text-secondary text-[17px] max-w-3xl leading-[30px]'
       >
-        I build responsive, user-friendly websites that looks great on any
-        device. I also provide remote IT support services  to ensure  your
+        I build responsive and user-friendly websites. I also provide remote IT support services  to ensure  your
         systems are running smoothly. From troubleshooting and maintenance
         to hardware setup and optimization, I offer dependable technical
         assisstance that keeps everything operating at its best.

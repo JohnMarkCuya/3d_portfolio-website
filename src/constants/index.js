@@ -78,6 +78,17 @@ const technologies = [
   },
 ];
 
+export const certifications = [
+  {
+    id: "css-nc2",
+    title: "CSS NC II (Computer Systems Servicing)",
+    issuer: "Technical Education and Skills Development Authority",
+    date: "Oct 04, 2025",
+    image: "/nc2.jpg",
+    file: "/nc2.jpg"
+  },
+];
+
 const projects = [
   {
     name: "3D Portfolio",
