@@ -3,27 +3,72 @@ import { Canvas } from "@react-three/fiber";
 import { OrbitControls, Preload, useGLTF } from "@react-three/drei";
 
 import CanvasLoader from "../Loader";
+import { useInView } from 'react-intersection-observer';
 
 const Computers = ({ isMobile }) => {
   const computer = useGLTF("./desktop_pc/scene.gltf");
 
+// ...existing code...
+useEffect(() => {
+  if (!computer?.scene) return;
+
+  computer.scene.traverse((child) => {
+    if (child.isMesh && child.geometry && child.geometry.attributes?.position) {
+      const posAttr = child.geometry.attributes.position;
+      const arr = posAttr.array;
+      let bad = false;
+
+      // detect NaN / non-finite values
+      for (let i = 0; i < arr.length; i++) {
+        const v = arr[i];
+        if (!Number.isFinite(v)) { bad = true; break; }
+      }
+
+      if (bad) {
+        console.warn('Bad geometry (NaN) in mesh:', child.name || child.uuid, child);
+
+        // Option A: sanitize by replacing invalid values with 0
+        for (let i = 0; i < arr.length; i++) {
+          if (!Number.isFinite(arr[i])) arr[i] = 0;
+        }
+        posAttr.needsUpdate = true;
+
+        // recompute safely
+        try {
+          child.geometry.computeBoundingSphere();
+          child.geometry.computeBoundingBox && child.geometry.computeBoundingBox();
+        } catch (e) {
+          console.error('Failed to compute bounds after sanitizing:', child.name || child.uuid, e);
+        }
+
+
+      }
+
+      // normal setup
+      child.castShadow = true;
+      child.receiveShadow = true;
+      if (child.material) child.material.needsUpdate = true;
+    }
+  });
+}, [computer]);
+
   return (
     <mesh>
-      <hemisphereLight intensity={0.15} groundColor='black' />
+      <hemisphereLight intensity={0.50} groundColor='black' />
       <spotLight
         position={[-20, 50, 10]}
         angle={0.12}
         penumbra={1}
-        intensity={1}
+        intensity={isMobile ? 2.5 : 9000}
         castShadow
         shadow-mapSize={1024}
       />
-      <pointLight intensity={1} />
+      <pointLight intensity={2.5} />
       <primitive
         object={computer.scene}
-        scale={isMobile ? 0.7 : 0.75}
-        position={isMobile ? [0, -3, -2.2] : [0, -3.25, -1.5]}
-        rotation={[-0.01, -0.2, -0.1]}
+        scale={isMobile ? 0.6 : 0.75}
+        position={isMobile ? [0, -2.9, -2] : [0, -3.25, -1.5]}
+        rotation={[-0.01, -0.2, -0.05]}
       />
     </mesh>
   );
@@ -57,9 +102,10 @@ const ComputersCanvas = () => {
     <Canvas
       frameloop='demand'
       shadows
-      dpr={[1, 2]}
+      dpr={[1, 1.5]}
       camera={{ position: [20, 3, 5], fov: 25 }}
-      gl={{ preserveDrawingBuffer: true }}
+      gl={{ preserveDrawingBuffer: true, antialias: false, powerPreference: 'low-power' }}
+      style={{ width: "100vw", height: "100vh", overflow: "hidden", touchAction: "none" }}
     >
       <Suspense fallback={<CanvasLoader />}>
         <OrbitControls
