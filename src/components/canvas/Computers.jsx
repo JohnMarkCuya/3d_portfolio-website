@@ -8,49 +8,6 @@ import { useInView } from 'react-intersection-observer';
 const Computers = ({ isMobile }) => {
   const computer = useGLTF("./desktop_pc/scene.gltf");
 
-useEffect(() => {
-  if (!computer?.scene) return;
-
-  computer.scene.traverse((child) => {
-    if (child.isMesh && child.geometry && child.geometry.attributes?.position) {
-      const posAttr = child.geometry.attributes.position;
-      const arr = posAttr.array;
-      let bad = false;
-
-      // detect NaN / non-finite values
-      for (let i = 0; i < arr.length; i++) {
-        const v = arr[i];
-        if (!Number.isFinite(v)) { bad = true; break; }
-      }
-
-      if (bad) {
-        console.warn('Bad geometry (NaN) in mesh:', child.name || child.uuid, child);
-
-        // Option A: sanitize by replacing invalid values with 0
-        for (let i = 0; i < arr.length; i++) {
-          if (!Number.isFinite(arr[i])) arr[i] = 0;
-        }
-        posAttr.needsUpdate = true;
-
-        // recompute safely
-        try {
-          child.geometry.computeBoundingSphere();
-          child.geometry.computeBoundingBox && child.geometry.computeBoundingBox();
-        } catch (e) {
-          console.error('Failed to compute bounds after sanitizing:', child.name || child.uuid, e);
-        }
-
-
-      }
-
-      // normal setup
-      child.castShadow = true;
-      child.receiveShadow = true;
-      if (child.material) child.material.needsUpdate = true;
-    }
-  });
-}, [computer]);
-
   return (
     <mesh>
       <hemisphereLight intensity={0.50} groundColor='black' />
