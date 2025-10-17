@@ -1,67 +1,87 @@
 import React, { Suspense, useEffect, useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, Preload, useGLTF } from "@react-three/drei";
-
 import CanvasLoader from "../Loader";
-import { useInView } from 'react-intersection-observer';
 
 const Computers = ({ isMobile }) => {
   const computer = useGLTF("./desktop_pc/scene.gltf");
 
   return (
-    <mesh>
-      <hemisphereLight intensity={0.50} groundColor='black' />
-      <spotLight
-        position={[-20, 50, 10]}
-        angle={0.12}
-        penumbra={1}
-        intensity={isMobile ? 1.5 : 9000}
-        castShadow
-        shadow-mapSize={1024}
-      />
-      <pointLight intensity={2.5} />
-      <primitive
-        object={computer.scene}
-        scale={isMobile ? 0.6 : 0.75}
-        position={isMobile ? [0, -2.9, -2] : [0, -3.25, -1.5]}
-        rotation={[-0.01, -0.2, -0.05]}
-      />
-    </mesh>
+    <group>
+      {/* ✅ Lighting changes depending on device */}
+      {isMobile ? (
+        <>
+          <ambientLight intensity={0.7} />
+          <directionalLight position={[5, 5, 5]} intensity={1.2} />
+          <spotLight
+            position={[-10, 15, 10]}
+            angle={0.3}
+            penumbra={0.8}
+            intensity={1.2}
+            castShadow={false}
+          />
+          <pointLight position={[0, 10, 0]} intensity={0.8} />
+        </>
+      ) : (
+        <>
+          <hemisphereLight intensity={0.5} groundColor="black" />
+          <spotLight
+            position={[-20, 50, 10]}
+            angle={0.12}
+            penumbra={1}
+            intensity={9000}
+            castShadow
+            shadow-mapSize={2048}
+          />
+          <pointLight intensity={2.5} />
+        </>
+      )}
+
+      {/* ✅ Safe model render */}
+      {computer.scene && (
+        <primitive
+          object={computer.scene}
+          scale={isMobile ? 0.6 : 0.75}
+          position={isMobile ? [0, -2.9, -2] : [0, -3.25, -1.5]}
+          rotation={[-0.01, -0.2, -0.05]}
+        />
+      )}
+    </group>
   );
 };
 
 const ComputersCanvas = () => {
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState(null);
 
   useEffect(() => {
-    // Add a listener for changes to the screen size
     const mediaQuery = window.matchMedia("(max-width: 500px)");
+    const update = () => setIsMobile(mediaQuery.matches);
 
-    // Set the initial value of the `isMobile` state variable
-    setIsMobile(mediaQuery.matches);
-
-    // Define a callback function to handle changes to the media query
-    const handleMediaQueryChange = (event) => {
-      setIsMobile(event.matches);
-    };
-
-    // Add the callback function as a listener for changes to the media query
-    mediaQuery.addEventListener("change", handleMediaQueryChange);
-
-    // Remove the listener when the component is unmounted
-    return () => {
-      mediaQuery.removeEventListener("change", handleMediaQueryChange);
-    };
+    update();
+    mediaQuery.addEventListener("change", update);
+    return () => mediaQuery.removeEventListener("change", update);
   }, []);
+
+  if (isMobile === null) return null;
 
   return (
     <Canvas
-      frameloop='demand'
-      shadows
-      dpr={[1, 1.5]}
+      shadows={!isMobile}
+      frameloop="demand"
+      dpr={isMobile ? [1, 1.3] : [1, 2]}
       camera={{ position: [20, 3, 5], fov: 25 }}
-      gl={{ preserveDrawingBuffer: true, antialias: true, powerPreference: 'high-performance', alpha: true }}
-      style={{ width: "100vw", height: "100vh", overflow: "hidden", touchAction: "none" }}
+      gl={{
+        antialias: true,
+        alpha: true,
+        preserveDrawingBuffer: !isMobile,
+        powerPreference: isMobile ? "low-power" : "high-performance",
+      }}
+      style={{
+        width: "100vw",
+        height: "100vh",
+        overflow: "hidden",
+        touchAction: "none",
+      }}
     >
       <Suspense fallback={<CanvasLoader />}>
         <OrbitControls
@@ -70,9 +90,8 @@ const ComputersCanvas = () => {
           minPolarAngle={Math.PI / 2}
         />
         <Computers isMobile={isMobile} />
+        <Preload all />
       </Suspense>
-
-      <Preload all />
     </Canvas>
   );
 };
