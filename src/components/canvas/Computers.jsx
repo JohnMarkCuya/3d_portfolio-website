@@ -6,9 +6,8 @@ import CanvasLoader from "../Loader";
 import { useInView } from 'react-intersection-observer';
 
 const Computers = ({ isMobile }) => {
-  const computer = useGLTF("/desktop_pc/scene.gltf");
+  const computer = useGLTF("/desktop_pc/scene.glb");
 
-// ...existing code...
 useEffect(() => {
   if (!computer?.scene) return;
 
