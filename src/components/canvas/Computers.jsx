@@ -3,12 +3,36 @@ import { Canvas } from "@react-three/fiber";
 import { OrbitControls, Preload, useGLTF } from "@react-three/drei";
 import CanvasLoader from "../Loader";
 
+import { useThree } from "@react-three/fiber";
+
+const AutoPause = () => {
+  const { gl, scene, camera } = useThree();
+
+  useEffect(() => {
+    const handleVisibility = () => {
+      if (document.hidden) {
+        gl.setAnimationLoop(null); // pause rendering when hidden
+      } else {
+        gl.setAnimationLoop(() => {
+          gl.render(scene, camera); // resume rendering when visible again
+        });
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibility);
+    return () => document.removeEventListener("visibilitychange", handleVisibility);
+  }, [gl, scene, camera]);
+
+  return null;
+};
+
+
 const Computers = ({ isMobile }) => {
   const computer = useGLTF("./desktop_pc/scene.gltf");
 
   return (
     <group>
-      {/* ✅ Lighting changes depending on device */}
+      {/* Lighting changes depending on device */}
       {isMobile ? (
         <>
           <ambientLight intensity={0.7} />
@@ -37,7 +61,7 @@ const Computers = ({ isMobile }) => {
         </>
       )}
 
-      {/* ✅ Safe model render */}
+      {/* Safe model render */}
       {computer.scene && (
         <primitive
           object={computer.scene}
@@ -91,6 +115,7 @@ const ComputersCanvas = () => {
         />
         <Computers isMobile={isMobile} />
         <Preload all />
+        <AutoPause />
       </Suspense>
     </Canvas>
   );
